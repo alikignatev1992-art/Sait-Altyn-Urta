@@ -1,0 +1,12 @@
+{
+  "mcp": {
+    "figma": {
+      "enabled": true,
+      "note": "Подключить через Claude Code MCP. /build тянет фреймы/токены из Figma через MCP, а не скриншотами."
+    }
+  },
+  "fileKeys": {
+    "designSystem": "<paste-figma-file-key>",
+    "screens": "<paste-figma-file-key>"
+  }
+}
