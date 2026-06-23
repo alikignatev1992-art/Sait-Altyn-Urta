@@ -1,23 +1,672 @@
 <!doctype html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <title>Алтын Юрта — халяльные полуфабрикаты ручной лепки, Стерлитамак</title>
-    <meta
-      name="description"
-      content="Халяльные мясные полуфабрикаты ручной лепки из Стерлитамака: пельмени, манты, котлеты. Доставка на дом, оплата при получении, опт по Башкортостану."
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Алтын Юрта — мобильная версия (превью для согласования)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* Токены проекта «Алтын Юрта» (src/styles/tokens.css) */
+  --bg:#F4EBDD; --surface:#FBF5EC; --text:#2A1F1A; --muted:#6B5C4F;
+  --accent:#C2542F; --accent-hover:#A8431F; --accent-2:#1C1410;
+  --on-accent:#FFFFFF; --on-accent-2:#F4EBDD; --border:rgba(42,31,26,.08);
+  --font-display:'Cormorant',Georgia,serif; --font-body:'Manrope',system-ui,sans-serif;
+  --shadow-card:0 12px 32px rgba(28,20,16,.12);
+  --r-card:16px; --r-img:20px; --r-pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-body); color:var(--text); min-height:100vh;
+  background:
+    radial-gradient(60% 50% at 78% 18%, rgba(194,84,47,.22) 0%, transparent 60%),
+    radial-gradient(50% 40% at 12% 90%, rgba(194,84,47,.10) 0%, transparent 60%),
+    linear-gradient(160deg,#241a14 0%,#1C1410 55%,#15100c 100%);
+  display:flex; flex-direction:column; align-items:center;
+  padding:40px 16px 64px;
+}
+.grain::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Шапка презентации ─────────────────────────── */
+.pitch-head{text-align:center;color:var(--on-accent-2);max-width:560px;margin-bottom:30px}
+.pitch-head .brand{font-family:var(--font-display);font-weight:600;font-size:40px;letter-spacing:-.02em;line-height:1}
+.pitch-head .brand .dot{color:var(--accent)}
+.pitch-head p{margin-top:12px;font-size:14px;color:rgba(244,235,221,.62);letter-spacing:.01em}
+
+/* ── Переключатель экранов ─────────────────────── */
+.tabs{display:flex;gap:6px;background:rgba(244,235,221,.07);border:1px solid rgba(244,235,221,.12);
+  padding:6px;border-radius:var(--r-pill);margin-bottom:26px;backdrop-filter:blur(8px)}
+.tabs button{
+  font-family:var(--font-body);font-size:13px;font-weight:600;color:rgba(244,235,221,.7);
+  background:transparent;border:0;cursor:pointer;padding:9px 16px;border-radius:var(--r-pill);
+  transition:color .2s,background .25s;white-space:nowrap}
+.tabs button:hover{color:var(--on-accent-2)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ── Рамка телефона ────────────────────────────── */
+.phone{
+  width:390px;max-width:100%;height:min(800px,82dvh);
+  background:#0c0907;border-radius:46px;padding:12px;
+  box-shadow:0 40px 90px -20px rgba(0,0,0,.65),0 0 0 2px rgba(244,235,221,.06),inset 0 0 0 2px #000;
+  position:relative;flex-shrink:0;
+}
+.phone::after{ /* динамик/камера */
+  content:"";position:absolute;top:24px;left:50%;transform:translateX(-50%);
+  width:108px;height:26px;background:#0c0907;border-radius:var(--r-pill);z-index:20;
+}
+.viewport{
+  position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;
+  background:var(--bg);display:flex;flex-direction:column;
+}
+.scroll{flex:1;min-height:0;position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.scroll::-webkit-scrollbar{width:0}
+
+/* ── Мини-шапка приложения ─────────────────────── */
+.app-bar{
+  position:sticky;top:0;z-index:15;display:flex;align-items:center;justify-content:space-between;
+  height:60px;flex-shrink:0;padding:0 18px;background:rgba(244,235,221,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border)}
+.app-bar .logo{font-family:var(--font-display);font-weight:600;font-size:20px;color:var(--text);letter-spacing:-.01em}
+.app-bar .right{display:flex;align-items:center;gap:6px}
+.iconbtn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border:0;background:transparent;color:var(--text);cursor:pointer;border-radius:var(--r-pill);transition:background .2s}
+.iconbtn:hover{background:rgba(42,31,26,.06)}
+.iconbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.iconbtn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cart-badge{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:var(--r-pill);
+  background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;line-height:1}
+.cart-badge.show{display:flex}
+
+/* ── Экран ─────────────────────────────────────── */
+.screen{display:none}
+.screen.active{display:block}
+/* Только горизонтальные поля — НЕ шорткатом, иначе обнуляет вертикальный
+   ритм секций (.pad стоит на каждой секции и бьёт section по специфичности). */
+.pad{padding-left:18px;padding-right:18px}
+section{padding:32px 0}
+.eyebrow{font-size:12px;font-weight:600;color:var(--accent-hover);letter-spacing:.02em}
+h1{font-family:var(--font-display);font-weight:600;letter-spacing:-.02em;line-height:1.04;color:var(--text);text-wrap:balance}
+h2{font-family:var(--font-display);font-weight:600;letter-spacing:-.02em;line-height:1.06;color:var(--text);text-wrap:balance}
+.h1{font-size:38px}
+.h2{font-size:28px}
+.lead{margin-top:14px;color:var(--muted);line-height:1.6;font-size:15px}
+.small{font-size:13px;color:var(--muted)}
+
+/* кнопки */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-body);
+  font-weight:600;font-size:15px;line-height:1;border-radius:var(--r-pill);padding:14px 24px;cursor:pointer;
+  border:1px solid transparent;transition:background .2s,color .2s,transform .1s,border-color .2s;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary[disabled]{opacity:.5;cursor:not-allowed}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-outline:hover{background:var(--surface)}
+.btn-block{width:100%}
+.btn-sm{padding:10px 16px;font-size:13px}
+
+/* hero — видео-фон, текст поверх */
+.hero{position:relative;min-height:540px;display:flex;align-items:flex-end;overflow:hidden;padding:0;background:var(--accent-2)}
+.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+/* Верх светлый — видно ролик и движение; низ тёмный — текст читается. */
+.hero-scrim{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(20,14,10,.18) 0%,rgba(20,14,10,.22) 28%,rgba(20,14,10,.62) 60%,rgba(20,14,10,.93) 100%)}
+.hero-content{position:relative;z-index:2;width:100%;padding-top:28px;padding-bottom:38px;
+  text-shadow:0 2px 26px rgba(0,0,0,.6)}
+.hero .eyebrow{color:#FFFFFF}
+.hero h1{color:#FCF7EF}
+.hero .lead{color:rgba(252,247,239,.9);max-width:none}
+.hero .trust-row{color:rgba(252,247,239,.9)}
+.hero .trust-row svg{stroke:#EBA77F}
+.hero .star{fill:#EFB791!important;stroke:#EFB791!important}
+.btn-hero-ghost{background:rgba(244,235,221,.14);color:#FCF7EF;border-color:rgba(244,235,221,.5);backdrop-filter:blur(4px)}
+.btn-hero-ghost:hover{background:rgba(244,235,221,.26)}
+.trust-row{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:13px;color:var(--muted)}
+.trust-row span{display:inline-flex;align-items:center;gap:7px}
+.trust-row svg{width:16px;height:16px;stroke:var(--accent-hover);stroke-width:1.8;fill:none}
+.star{fill:var(--accent)!important;stroke:var(--accent)!important}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+
+/* блок доверия — список на волосяных линиях */
+.section-surface{background:var(--surface)}
+.trust-list{margin-top:8px}
+.trust-list li{display:flex;gap:14px;padding:20px 0;border-top:1px solid var(--border);list-style:none}
+.trust-list li:first-child{border-top:0}
+.trust-ic{flex:0 0 auto;width:42px;height:42px;border-radius:var(--r-pill);background:rgba(194,84,47,.1);
+  color:var(--accent-hover);display:flex;align-items:center;justify-content:center}
+.trust-ic svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trust-list .t-title{font-family:var(--font-display);font-size:21px;font-weight:600;color:var(--text)}
+.trust-list .t-desc{margin-top:3px;font-size:13.5px;color:var(--muted);line-height:1.5}
+.process{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.process img{width:100%;height:100%;object-fit:cover;border-radius:14px;display:block}
+.process .big{grid-column:1/3;aspect-ratio:16/10}
+.process .sq{aspect-ratio:1}
+
+/* карточки товара */
+.cat-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.card{background:var(--surface);border-radius:var(--r-card);overflow:hidden;box-shadow:var(--shadow-card);
+  display:flex;flex-direction:column}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.card .body{padding:12px 12px 14px;display:flex;flex-direction:column;gap:5px;flex:1}
+.card .name{font-weight:600;font-size:14px;color:var(--text);line-height:1.2}
+.card .comp{font-size:11.5px;color:var(--muted);line-height:1.4}
+.card .row{margin-top:auto;display:flex;flex-direction:column;align-items:stretch;gap:10px;padding-top:12px}
+.card .price{font-weight:700;color:var(--accent-hover);font-size:16px;display:flex;align-items:baseline;gap:6px}
+.card .price small{font-weight:400;color:var(--muted);font-size:11px}
+.card .row .btn{width:100%;padding-top:11px;padding-bottom:11px}
+
+/* отзывы — свайп-карусель */
+.reviews-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.reviews-nav{display:flex;gap:8px;flex:0 0 auto}
+.rnav{width:42px;height:42px;border-radius:var(--r-pill);border:1px solid var(--border);background:var(--surface);
+  color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .2s,color .2s,opacity .2s}
+.rnav:hover{border-color:var(--accent);color:var(--accent-hover)}
+.rnav:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rnav:disabled{opacity:.3;cursor:default;border-color:var(--border);color:var(--text)}
+.rnav svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.reviews-track{display:flex;gap:12px;margin-top:18px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.reviews-track::-webkit-scrollbar{display:none}
+.review-card{flex:0 0 88%;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:20px;display:flex;flex-direction:column;gap:12px}
+.review-stars{display:flex;gap:3px}
+.review-stars svg{width:15px;height:15px;fill:var(--accent);stroke:var(--accent)}
+.review-q{color:var(--text);line-height:1.55;font-size:14.5px}
+.review-who{font-size:13px;font-weight:600;color:var(--text)}
+.review-who span{font-weight:400;color:var(--muted)}
+.reviews-dots{display:flex;justify-content:center;gap:7px;margin-top:16px}
+.reviews-dots button{width:7px;height:7px;border-radius:var(--r-pill);border:0;padding:0;cursor:pointer;
+  background:rgba(42,31,26,.22);transition:background .25s,width .25s}
+.reviews-dots button[aria-current="true"]{background:var(--accent);width:22px}
+.reviews-dots button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* condition banner */
+.cond{background:var(--accent-2);color:var(--on-accent-2);border-radius:var(--r-card);padding:18px}
+.cond .t{font-weight:600;font-size:14px}
+.cond ul{margin-top:8px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.cond li{font-size:12.5px;color:rgba(244,235,221,.8);display:flex;gap:8px}
+.cond li::before{content:"—";color:var(--accent)}
+
+/* cart line */
+.line{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:12px}
+.line img{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:0 0 auto}
+.line .info{flex:1;min-width:0}
+.line .info .n{font-weight:600;font-size:14px;color:var(--text)}
+.line .info .p{font-size:12px;color:var(--muted);margin-top:2px}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg);
+  font-size:17px;color:var(--text);cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
+.qty button:hover{border-color:var(--accent)}
+.qty span{min-width:18px;text-align:center;font-weight:600;font-size:14px}
+.nudge{background:rgba(194,84,47,.1);color:var(--accent-hover);font-weight:600;font-size:12.5px;
+  border-radius:var(--r-pill);padding:11px 16px}
+.summary{border-top:1px solid var(--border);padding-top:18px;display:flex;flex-direction:column;gap:12px}
+.summary .total{font-size:18px;font-weight:700;color:var(--text)}
+
+/* opt hero */
+.opt-hero{position:relative;background:var(--accent-2);color:var(--on-accent-2);overflow:hidden;padding:34px 18px 30px}
+.opt-hero h1{color:var(--on-accent-2)}
+.opt-hero .eyebrow{color:rgba(244,235,221,.6)}
+.opt-hero .lead{color:rgba(244,235,221,.8)}
+.opt-hero-media{margin-top:22px;border-radius:var(--r-img);overflow:hidden;border:1px solid rgba(244,235,221,.14)}
+.opt-hero-media img{width:100%;height:170px;object-fit:cover;display:block}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:600;color:var(--text)}
+.field input,.field textarea{font-family:var(--font-body);font-size:15px;color:var(--text);background:var(--bg);
+  border:1px solid var(--border);border-radius:var(--r-card);padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.field textarea{min-height:78px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(194,84,47,.18)}
+
+/* footer */
+.app-foot{background:var(--accent-2);color:var(--on-accent-2);padding:30px 18px 36px}
+.app-foot .fb{font-family:var(--font-display);font-size:19px;font-weight:600}
+.app-foot p{font-size:12.5px;color:rgba(244,235,221,.7);margin-top:8px;line-height:1.5}
+.app-foot ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:9px;font-size:13px;color:rgba(244,235,221,.82)}
+.app-foot li{display:flex;align-items:center;gap:9px}
+.app-foot svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.7;fill:none;flex:0 0 auto}
+
+/* мобильное меню */
+.menu-overlay{position:absolute;inset:0;z-index:30;background:rgba(28,20,16,.45);backdrop-filter:blur(2px);
+  opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.menu-overlay.open{opacity:1;visibility:visible}
+.menu{position:absolute;inset:0 0 0 auto;z-index:31;width:78%;max-width:300px;background:var(--bg);
+  padding:22px 20px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.22,1,.36,1);
+  box-shadow:var(--shadow-card)}
+.menu.open{transform:translateX(0)}
+.menu-top{display:flex;align-items:center;justify-content:space-between}
+.menu-top .logo{font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--text)}
+.menu nav{margin-top:26px;display:flex;flex-direction:column;gap:2px}
+.menu nav button{text-align:left;font-size:18px;color:var(--text);background:transparent;border:0;cursor:pointer;
+  padding:13px 12px;border-radius:var(--r-card);transition:background .2s,color .2s;font-family:var(--font-body)}
+.menu nav button:hover{background:var(--surface);color:var(--accent-hover)}
+.menu .menu-cta{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:20px}
+
+/* toast */
+.toast{position:absolute;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);z-index:40;
+  background:var(--accent-2);color:var(--on-accent-2);font-size:13px;font-weight:600;padding:11px 18px;border-radius:var(--r-pill);
+  box-shadow:var(--shadow-card);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* reveal (page-load / смена экрана) */
+.reveal{opacity:0;transform:translateY(16px);animation:reveal .6s cubic-bezier(.22,1,.36,1) forwards;animation-delay:var(--d,0ms)}
+.reveal.fade{transform:none;animation-name:fade;animation-duration:.8s}
+@keyframes reveal{to{opacity:1;transform:translateY(0)}}
+@keyframes fade{to{opacity:1}}
+
+.legend{margin-top:30px;color:rgba(244,235,221,.5);font-size:12px;text-align:center;max-width:380px;line-height:1.6}
+
+@media (prefers-reduced-motion:reduce){
+  .reveal{animation:none!important;opacity:1;transform:none}
+  .menu,.menu-overlay,.toast{transition:none}
+  .scroll{scroll-behavior:auto}
+}
+@media (max-width:430px){
+  body{padding:0}
+  .phone{border-radius:0;padding:0;width:100%;height:100dvh;box-shadow:none}
+  .phone::after{display:none}
+  .viewport{border-radius:0}
+  .pitch-head,.tabs,.legend{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="pitch-head">
+  <div class="brand">Алтын Юрта<span class="dot">.</span></div>
+  <p>Мобильная версия сайта · превью для согласования. Переключайте экраны и откройте меню&nbsp;☰</p>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Экраны">
+  <button role="tab" aria-selected="true"  data-go="home">Главная</button>
+  <button role="tab" aria-selected="false" data-go="catalog">Каталог</button>
+  <button role="tab" aria-selected="false" data-go="cart">Корзина</button>
+  <button role="tab" aria-selected="false" data-go="wholesale">Опт</button>
+</div>
+
+<div class="phone">
+  <div class="viewport">
+
+    <!-- мини-шапка -->
+    <div class="app-bar">
+      <button class="logo" data-go="home" style="border:0;background:none;cursor:pointer">Алтын Юрта</button>
+      <div class="right">
+        <button class="iconbtn" data-go="cart" aria-label="Корзина">
+          <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M6 6L5 3H2"/></svg>
+          <span class="cart-badge" id="badge">2</span>
+        </button>
+        <button class="iconbtn" id="burger" aria-label="Открыть меню" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll" id="scroll">
+
+      <!-- ════ ГЛАВНАЯ ════ -->
+      <div class="screen active" id="home">
+        <section class="hero">
+          <video class="hero-vid" autoplay muted loop playsinline preload="auto" poster="poster.jpg" aria-hidden="true">
+            <source src="hero.mp4" type="video/mp4" />
+          </video>
+          <div class="hero-scrim"></div>
+          <div class="hero-content pad">
+            <p class="eyebrow reveal" style="--d:0ms">С 2012 года · Стерлитамак</p>
+            <h1 class="h1 reveal" style="--d:90ms">Халяльные<br>полуфабрикаты<br>ручной лепки</h1>
+            <p class="lead reveal" style="--d:170ms">Пельмени, манты, котлеты — лепим вручную, без ГМО, по канонам Халяль. Продукт Башкортостана. Доставка на дом или самовывоз.</p>
+            <div class="trust-row reveal" style="--d:250ms">
+              <span><svg class="star" viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg>4.9 — оценка покупателей</span>
+              <span><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Сертификат Халяль</span>
+            </div>
+            <div class="cta-row reveal" style="--d:330ms">
+              <button class="btn btn-primary" data-go="catalog">Заказать</button>
+              <button class="btn btn-hero-ghost" data-go="wholesale">Оптом</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-surface pad">
+          <h2 class="h2 reveal">Делаем так, как&nbsp;для своей семьи</h2>
+          <p class="lead reveal" style="--d:80ms;max-width:none">С 2012 года в Стерлитамаке. Настоящий халяль с документами, ручная лепка и состав без ГМО — то, что отличает домашнюю еду от безликой заморозки с полки.</p>
+          <ul class="trust-list">
+            <li class="reveal" style="--d:120ms"><span class="trust-ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><div><div class="t-title">Сертификат Халяль</div><div class="t-desc">Забой и производство по канонам, подтверждено сертификатом.</div></div></li>
+            <li class="reveal" style="--d:180ms"><span class="trust-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 16l-4.9 2.6 1-5.5-4-3.9 5.5-.8z"/></svg></span><div><div class="t-title">Продукт Башкортостана</div><div class="t-desc">Локальное производство в Стерлитамаке, без посредников.</div></div></li>
+            <li class="reveal" style="--d:240ms"><span class="trust-ic"><svg viewBox="0 0 24 24"><path d="M7 11V6a2 2 0 0 1 4 0v5M11 8a2 2 0 0 1 4 0v3M15 9a2 2 0 0 1 4 0v5a6 6 0 0 1-6 6h-2a5 5 0 0 1-5-5l-2-3"/></svg></span><div><div class="t-title">Ручная лепка</div><div class="t-desc">Каждая позиция формуется руками, без ГМО и заменителей.</div></div></li>
+          </ul>
+          <div class="process">
+            <img class="big reveal fade" style="--d:120ms" src="https://images.unsplash.com/photo-1589047133531-570405874c6a?auto=format&fit=crop&w=560&q=72" alt="Руки лепят пельмень с начинкой" />
+            <img class="sq reveal fade" style="--d:180ms" src="https://images.unsplash.com/photo-1687704488492-cffe014a1e42?auto=format&fit=crop&w=320&q=72" alt="Свежая лепка на присыпанной мукой доске" />
+            <img class="sq reveal fade" style="--d:240ms" src="https://images.unsplash.com/photo-1543198432-a20fa3055570?auto=format&fit=crop&w=320&q=72" alt="Готовые пельмени на бамбуковом подносе" />
+          </div>
+        </section>
+
+        <section class="pad">
+          <div class="reviews-head">
+            <h2 class="h2 reveal">Что говорят покупатели</h2>
+            <div class="reviews-nav reveal" style="--d:60ms">
+              <button class="rnav" id="revPrev" type="button" aria-label="Предыдущий отзыв"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <button class="rnav" id="revNext" type="button" aria-label="Следующий отзыв"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+            </div>
+          </div>
+          <div class="reviews-track reveal" id="reviews" style="--d:90ms" role="group" aria-label="Отзывы покупателей, листайте свайпом">
+            <article class="review-card">
+              <div class="review-stars" aria-label="Оценка 5 из 5">
+                <svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg>
+              </div>
+              <p class="review-q">«Беру пельмени каждую неделю — вкус как у бабушки, тесто тонкое, мяса много. Доставка быстрая.»</p>
+              <p class="review-who">Гульнара <span>· Стерлитамак</span></p>
+            </article>
+            <article class="review-card">
+              <div class="review-stars" aria-label="Оценка 5 из 5">
+                <svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg>
+              </div>
+              <p class="review-q">«Заказывали манты на большую семью. Качество отличное, что важно — настоящий халяль с документами.»</p>
+              <p class="review-who">Ринат <span>· Стерлитамак</span></p>
+            </article>
+            <article class="review-card">
+              <div class="review-stars" aria-label="Оценка 5 из 5">
+                <svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19l1-5.8L3.6 9.1l5.8-.8z"/></svg>
+              </div>
+              <p class="review-q">«Поставляют в нашу кафе-пекарню уже год. Стабильно, в срок, цена адекватная. Рекомендую как опт.»</p>
+              <p class="review-who">Айгуль <span>· кафе «Сандугач»</span></p>
+            </article>
+          </div>
+          <div class="reviews-dots" id="revDots"></div>
+        </section>
+
+        <section class="section-surface pad">
+          <div class="cat-head">
+            <div>
+              <h2 class="h2 reveal">Каталог</h2>
+              <p class="small reveal" style="--d:60ms;margin-top:6px">В тесте и глубокая заморозка</p>
+            </div>
+            <button class="btn btn-outline btn-sm reveal" style="--d:90ms" data-go="catalog">Весь каталог</button>
+          </div>
+          <div class="grid-2">
+            <article class="card reveal" style="--d:120ms">
+              <img src="https://images.unsplash.com/photo-1589047133481-02b4a5327d89?auto=format&fit=crop&w=420&q=72" alt="Пельмени classic">
+              <div class="body"><div class="name">Пельмени classic</div><div class="comp">Говядина, баранина, лук, специи</div>
+                <div class="row"><div class="price">320 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+            <article class="card reveal" style="--d:180ms">
+              <img src="https://images.unsplash.com/photo-1638502338747-f7f368214cce?auto=format&fit=crop&w=420&q=72" alt="Манты с тыквой">
+              <div class="body"><div class="name">Манты с тыквой</div><div class="comp">Баранина, тыква, лук, специи</div>
+                <div class="row"><div class="price">350 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+          </div>
+        </section>
+
+        <footer class="app-foot" id="contacts">
+          <div class="fb">Алтын Юрта</div>
+          <p>Халяльные мясные полуфабрикаты ручной лепки. Стерлитамак, с 2012 года.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Телефон уточняется</li>
+            <li><svg viewBox="0 0 24 24"><path d="M22 4L11 13M22 4l-7 17-4-8-8-4z"/></svg>Telegram-бот уточняется</li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Адрес уточняется, Стерлитамак</li>
+          </ul>
+        </footer>
+      </div>
+
+      <!-- ════ КАТАЛОГ ════ -->
+      <div class="screen" id="catalog">
+        <section class="pad">
+          <h1 class="h2 reveal">Каталог</h1>
+          <p class="lead reveal" style="--d:70ms;font-size:14px">Заказ от 1000 ₽, бесплатная доставка по Стерлитамаку от 2000 ₽, оплата при получении.</p>
+        </section>
+        <section class="pad" style="padding-top:0">
+          <h2 class="h2 reveal" style="font-size:23px">В тесте</h2>
+          <div class="grid-2">
+            <article class="card reveal" style="--d:90ms">
+              <img src="https://images.unsplash.com/photo-1589047133481-02b4a5327d89?auto=format&fit=crop&w=420&q=72" alt="Пельмени classic">
+              <div class="body"><div class="name">Пельмени classic</div><div class="comp">Говядина, баранина, лук, специи</div><div class="comp" style="font-size:10.5px">Срок: 30 сут. при −18°C</div>
+                <div class="row"><div class="price">320 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+            <article class="card reveal" style="--d:140ms">
+              <img src="https://images.unsplash.com/photo-1638502338747-f7f368214cce?auto=format&fit=crop&w=420&q=72" alt="Манты с тыквой">
+              <div class="body"><div class="name">Манты с тыквой</div><div class="comp">Баранина, тыква, лук, специи</div><div class="comp" style="font-size:10.5px">Срок: 30 сут. при −18°C</div>
+                <div class="row"><div class="price">350 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+            <article class="card reveal" style="--d:190ms">
+              <img src="https://images.unsplash.com/photo-1588166524938-1ee110d7dcef?auto=format&fit=crop&w=420&q=72" alt="Вареники с мясом">
+              <div class="body"><div class="name">Вареники с мясом</div><div class="comp">Говядина, лук, тесто на воде</div><div class="comp" style="font-size:10.5px">Срок: 30 сут. при −18°C</div>
+                <div class="row"><div class="price">300 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+            <article class="card reveal" style="--d:240ms">
+              <img src="https://images.unsplash.com/photo-1638502521795-89107ac5e246?auto=format&fit=crop&w=420&q=72" alt="Хинкали">
+              <div class="body"><div class="name">Хинкали</div><div class="comp">Говядина, баранина, зелень, специи</div><div class="comp" style="font-size:10.5px">Срок: 30 сут. при −18°C</div>
+                <div class="row"><div class="price">360 ₽<small>0.5 кг</small></div><button class="btn btn-primary btn-sm add">В корзину</button></div></div>
+            </article>
+          </div>
+        </section>
+        <section class="section-surface pad">
+          <h2 class="h2 reveal" style="font-size:23px">Глубокая заморозка</h2>
+          <p class="lead reveal" style="--d:70ms;font-size:14px">Фрикадельки, голубцы и другое — состав и сроки на каждой карточке. Полный ассортимент уточняется.</p>
+          <div class="hero-media reveal fade" style="--d:120ms;margin-top:18px">
+            <img style="height:180px" src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=620&q=72" alt="Ассортимент полуфабрикатов в мисках на деревянном столе">
+          </div>
+        </section>
+      </div>
+
+      <!-- ════ КОРЗИНА ════ -->
+      <div class="screen" id="cart">
+        <section class="pad">
+          <h1 class="h2 reveal">Корзина</h1>
+          <div class="cond reveal" style="--d:70ms;margin-top:18px">
+            <div class="t">Условия заказа</div>
+            <ul><li>Минимальная сумма заказа — 1000 ₽</li><li>Бесплатная доставка по Стерлитамаку от 2000 ₽</li><li>Оплата при получении (наличными или картой курьеру)</li></ul>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+            <div class="line reveal" style="--d:120ms" data-price="320">
+              <img src="https://images.unsplash.com/photo-1589047133481-02b4a5327d89?auto=format&fit=crop&w=160&q=70" alt="Пельмени classic">
+              <div class="info"><div class="n">Пельмени classic</div><div class="p">320 ₽ · 0.5 кг</div></div>
+              <div class="qty"><button class="dec" aria-label="Меньше">−</button><span>2</span><button class="inc" aria-label="Больше">+</button></div>
+            </div>
+            <div class="line reveal" style="--d:170ms" data-price="350">
+              <img src="https://images.unsplash.com/photo-1638502338747-f7f368214cce?auto=format&fit=crop&w=160&q=70" alt="Манты с тыквой">
+              <div class="info"><div class="n">Манты с тыквой</div><div class="p">350 ₽ · 0.5 кг</div></div>
+              <div class="qty"><button class="dec" aria-label="Меньше">−</button><span>1</span><button class="inc" aria-label="Больше">+</button></div>
+            </div>
+          </div>
+
+          <p class="nudge reveal" id="nudge" style="--d:210ms;margin-top:16px">Добавьте ещё на 1010 ₽ — и доставка бесплатно</p>
+
+          <div class="summary reveal" style="--d:250ms;margin-top:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="total">Итого: <span id="cart-total">990</span> ₽</span>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkout-btn" disabled>Оформить заказ</button>
+            <p class="small" id="min-note">Минимальный заказ — 1000 ₽, добавьте ещё на <span id="min-left">10</span> ₽</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ════ ОПТ ════ -->
+      <div class="screen" id="wholesale">
+        <section class="opt-hero grain">
+          <p class="eyebrow reveal" style="--d:0ms">Для бизнеса</p>
+          <h1 class="h2 reveal" style="--d:80ms;position:relative">Работаем оптом по Башкортостану и регионам</h1>
+          <p class="lead reveal" style="--d:160ms;position:relative">Магазины, кафе, юридические лица — сертифицированная продукция Халяль, цены по запросу, стабильные поставки.</p>
+          <div class="opt-hero-media reveal fade" style="--d:200ms">
+            <img src="https://images.unsplash.com/photo-1638502521795-89107ac5e246?auto=format&fit=crop&w=620&q=74" alt="Партия полуфабрикатов, готовая продукция">
+          </div>
+        </section>
+        <section class="pad">
+          <h2 class="h2 reveal" style="font-size:24px">Оставить заявку</h2>
+          <form style="margin-top:18px" onsubmit="return optSubmit(event)">
+            <div class="field reveal" style="--d:80ms"><label for="o-org">Название организации</label><input id="o-org" required></div>
+            <div class="field reveal" style="--d:120ms"><label for="o-name">Контактное лицо</label><input id="o-name" required></div>
+            <div class="field reveal" style="--d:160ms"><label for="o-phone">Телефон</label><input id="o-phone" type="tel" required></div>
+            <div class="field reveal" style="--d:200ms"><label for="o-vol">Что интересует / объём</label><textarea id="o-vol"></textarea></div>
+            <button class="btn btn-primary btn-block reveal" style="--d:240ms" type="submit">Отправить заявку</button>
+            <p class="small reveal" id="opt-done" style="--d:260ms;margin-top:12px;display:none;color:var(--accent-hover);font-weight:600">Заявка отправлена — свяжемся для уточнения условий и цен.</p>
+          </form>
+        </section>
+        <footer class="app-foot">
+          <div class="fb">Алтын Юрта</div>
+          <p>Опт по РБ и регионам. Сертификаты и цены — по запросу.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Телефон уточняется</li>
+            <li><svg viewBox="0 0 24 24"><path d="M22 4L11 13M22 4l-7 17-4-8-8-4z"/></svg>Telegram-бот уточняется</li>
+          </ul>
+        </footer>
+      </div>
+
+    </div><!-- /scroll -->
+
+    <!-- мобильное меню -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <aside class="menu" id="menu" aria-label="Меню навигации" aria-hidden="true">
+      <div class="menu-top">
+        <span class="logo">Алтын Юрта</span>
+        <button class="iconbtn" id="menuClose" aria-label="Закрыть меню"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <nav>
+        <button data-go="catalog">Каталог</button>
+        <button data-go="wholesale">Опт</button>
+        <button data-go="home">О производстве</button>
+        <button data-go="home">Контакты</button>
+      </nav>
+      <div class="menu-cta">
+        <button class="btn btn-outline btn-block" data-go="cart">Корзина</button>
+        <button class="btn btn-primary btn-block" data-go="catalog">Заказать</button>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast">Добавлено в корзину</div>
+
+  </div><!-- /viewport -->
+</div><!-- /phone -->
+
+<p class="legend">Это интерактивный прототип в реальной дизайн-системе бренда. Фото — стоковые (Unsplash) для демонстрации; заменяются на собственную съёмку завода. Телефон, адрес и Telegram появятся после согласования.</p>
+
+<script>
+(function(){
+  var screens = document.querySelectorAll('.screen');
+  var tabs = document.querySelectorAll('.tabs button');
+  var scroll = document.getElementById('scroll');
+
+  function go(id){
+    screens.forEach(function(s){ s.classList.toggle('active', s.id===id); });
+    tabs.forEach(function(t){ t.setAttribute('aria-selected', String(t.dataset.go===id)); });
+    if(scroll) scroll.scrollTop = 0;
+    closeMenu();
+  }
+
+  document.addEventListener('click', function(e){
+    var nav = e.target.closest('[data-go]');
+    if(nav){ go(nav.dataset.go); }
+  });
+
+  /* ── меню ── */
+  var menu = document.getElementById('menu');
+  var overlay = document.getElementById('menuOverlay');
+  var burger = document.getElementById('burger');
+  function openMenu(){ menu.classList.add('open'); overlay.classList.add('open'); burger.setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); }
+  function closeMenu(){ menu.classList.remove('open'); overlay.classList.remove('open'); burger.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); }
+  burger.addEventListener('click', openMenu);
+  document.getElementById('menuClose').addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeMenu(); });
+
+  /* ── корзина ── */
+  var badge = document.getElementById('badge');
+  var count = 3; // 2 + 1 в демо
+  function refreshBadge(){ badge.textContent = count; badge.classList.toggle('show', count>0); }
+  refreshBadge();
+
+  var toast = document.getElementById('toast'); var toastT;
+  function showToast(msg){ toast.textContent = msg||'Добавлено в корзину'; toast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){toast.classList.remove('show');},1600); }
+
+  document.querySelectorAll('.add').forEach(function(b){
+    b.addEventListener('click', function(){ count++; refreshBadge(); showToast(); });
+  });
+
+  /* ── живой расчёт корзины ── */
+  var MIN=1000, FREE=2000;
+  function recalc(){
+    var total=0;
+    document.querySelectorAll('#cart .line').forEach(function(line){
+      var price=+line.dataset.price; var qty=+line.querySelector('.qty span').textContent;
+      total += price*qty;
+    });
+    document.getElementById('cart-total').textContent = total;
+    var btn=document.getElementById('checkout-btn');
+    var note=document.getElementById('min-note');
+    var nudge=document.getElementById('nudge');
+    var left = MIN-total;
+    if(left>0){ btn.disabled=true; note.style.display='block'; document.getElementById('min-left').textContent=left; }
+    else { btn.disabled=false; note.style.display='none'; }
+    var freeLeft = FREE-total;
+    if(freeLeft>0){ nudge.style.display='block'; nudge.textContent='Добавьте ещё на '+freeLeft+' ₽ — и доставка бесплатно'; }
+    else { nudge.style.display='block'; nudge.textContent='Доставка бесплатно — порог пройден ✓'; }
+  }
+  document.querySelectorAll('#cart .qty').forEach(function(q){
+    var span=q.querySelector('span');
+    q.querySelector('.inc').addEventListener('click', function(){ span.textContent=Math.min(99,+span.textContent+1); recalc(); });
+    q.querySelector('.dec').addEventListener('click', function(){ span.textContent=Math.max(1,+span.textContent-1); recalc(); });
+  });
+  recalc();
+
+  window.optSubmit=function(e){ e.preventDefault(); document.getElementById('opt-done').style.display='block'; e.target.querySelector('button[type=submit]').textContent='Готово'; return false; };
+
+  /* ── карусель отзывов: свайп + кнопки + точки ── */
+  var track=document.getElementById('reviews');
+  if(track){
+    var cards=track.querySelectorAll('.review-card');
+    var dots=document.getElementById('revDots');
+    var prev=document.getElementById('revPrev'), next=document.getElementById('revNext');
+    cards.forEach(function(_,i){
+      var d=document.createElement('button');
+      d.type='button'; d.setAttribute('aria-label','Отзыв '+(i+1));
+      d.addEventListener('click', function(){ toIdx(i); });
+      dots.appendChild(d);
+    });
+    function stepW(){ return cards[0].getBoundingClientRect().width + 12; }
+    function curIdx(){ return Math.round(track.scrollLeft / stepW()); }
+    function toIdx(i){ i=Math.max(0,Math.min(cards.length-1,i)); track.scrollTo({left:i*stepW(),behavior:'smooth'}); }
+    function update(){
+      var i=curIdx();
+      dots.querySelectorAll('button').forEach(function(d,di){ d.setAttribute('aria-current', String(di===i)); });
+      prev.disabled = i<=0; next.disabled = i>=cards.length-1;
+    }
+    prev.addEventListener('click', function(){ toIdx(curIdx()-1); });
+    next.addEventListener('click', function(){ toIdx(curIdx()+1); });
+    var raf; track.addEventListener('scroll', function(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(update); });
+    update();
+  }
+
+  /* ── видео hero: пауза при reduced-motion, страховка автоплея ── */
+  var hv=document.querySelector('.hero-vid');
+  if(hv){
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ hv.removeAttribute('autoplay'); hv.pause(); }
+    else {
+      hv.muted=true; // обязательно для автоплея
+      var tryPlay=function(){ var p=hv.play(); if(p&&p.catch) p.catch(function(){}); };
+      tryPlay();
+      // Дозапуск, как только видео готово (атрибут autoplay срабатывает не всегда).
+      ['loadeddata','canplay','canplaythrough'].forEach(function(ev){ hv.addEventListener(ev,tryPlay); });
+      // Последняя страховка: запуск по первому действию пользователя.
+      var evs=['pointerdown','touchstart','click','keydown','scroll'];
+      var kick=function(){ tryPlay(); };
+      evs.forEach(function(ev){ window.addEventListener(ev,kick,{passive:true}); });
+      hv.addEventListener('playing',function(){ evs.forEach(function(ev){ window.removeEventListener(ev,kick); }); });
+    }
+  }
+})();
+</script>
+</body>
 </html>
